@@ -8,7 +8,7 @@ export async function setGauge(outboxPath: string,
                                value: number) {
     let labelStr;
     if(labels.size == 0)
-        labelStr = " ";
+        labelStr = "";
     else {
         labelStr = "{";
         let i=0;
@@ -19,7 +19,7 @@ export async function setGauge(outboxPath: string,
         }
         labelStr += "}";
     }
-    fs.appendFile(path.join(outboxPath, "solana-prometheus-exporter.prom"),
+    fs.writeFile(path.join(outboxPath, `${metric}.prom`),
                   `# TYPE ${metric} gauge\n${metric}${labelStr} ${value}\n`,
                   (e) => {if(e) console.error(e);});
 }
