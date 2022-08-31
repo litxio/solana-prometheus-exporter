@@ -5,7 +5,7 @@
   "bin": "bin/app.js",
   "repository": "git@github.com:litxio/solana-prometheus-exporter.git",
   "author": "Richard Warfield <warfield@fmail.com>",
-  "license": "Commercial",
+  "license": "MIT",
   "private": true,
   "devDependencies": {
     "ts-node": "^10.9.1"
