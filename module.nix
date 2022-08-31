@@ -40,7 +40,7 @@ in {
             ];
         in env;
       serviceConfig.ExecStart =
-        "${pkgs.solana-prometheus-exporter}/bin/app.js";
+        "${pkgs.solana-prometheus-exporter}/bin/solana-prometheus-exporter";
     };
   };
 }
