@@ -33,10 +33,10 @@ in {
         let refUris = builtins.concatStringsSep "," cfg.referenceRpcUris;
             env = builtins.concatStringsSep " " [
               "NODE_EXPORTER_OUTBOX_PATH=${cfg.outboxPath}"
-              "METRIC_FREQUENCY=${cfg.metricFreq}"
+              "METRIC_FREQUENCY=${toString cfg.metricFreq}"
               "LOCAL_RPC_API=${cfg.localUri}"
               "REFERENCE_RPC_URIS=${refUris}"
-              "VALIDATOR_IDENTITY=${validatorIdentity}"
+              "VALIDATOR_IDENTITY=${cfg.validatorIdentity}"
             ];
         in env;
       serviceConfig.ExecStart =
