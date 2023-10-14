@@ -24,6 +24,10 @@ in {
       type = types.str;
       default = "";
     };
+    solanaBinaryPath = mkOption {
+      type = types.str;
+      default = "${pkgs.solana-cli}/bin/solana";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -37,6 +41,7 @@ in {
               "LOCAL_RPC_API=${cfg.localUri}"
               "REFERENCE_RPC_URIS=${refUris}"
               "VALIDATOR_IDENTITY=${cfg.validatorIdentity}"
+              "SOLANA_BINARY_PATH=${cfg.solanaBinaryPath}"
             ];
         in env;
       serviceConfig.ExecStart =
