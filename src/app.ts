@@ -3,11 +3,13 @@
 import {Connection, PublicKey} from '@solana/web3.js';
 import { checkDelinquency } from './delinquency';
 import { checkValidatorBalance } from './validator_balance';
+import { checkSolanaValidatorsMetrics } from './validators_command';
 
 
 /*
  * Environment variables:
  *  - NODE_EXPORTER_OUTBOX_PATH (required)
+ *  - SOLANA_BINARY_PATH (required)
  *  - METRIC_FREQUENCY (in seconds, how often to check metrics; default 60)
  *  - LOCAL_RPC_URI (full URI; defaults to http://127.0.0.1:8899)
  *  - REFERENCE_RPC_URIS (Comma separated.  delinquency is calculated
@@ -19,6 +21,7 @@ import { checkValidatorBalance } from './validator_balance';
 
 
 async function checkMetrics(outboxPath: string,
+                            solanaBinaryPath: string,
                             localConn: Connection,
                             referenceRpcConns: Connection[],
                             validatorIdentity: string | undefined) {
@@ -39,6 +42,16 @@ async function checkMetrics(outboxPath: string,
             console.warn("Error checking validator balance:", e);
         }
     }
+
+    try {
+        await checkSolanaValidatorsMetrics(
+            solanaBinaryPath,
+            validatorIdentity ? [new PublicKey(validatorIdentity)] : null,
+            outboxPath
+        )
+    } catch (e) {
+        console.warn("Error getting metrics from `solana validators`:", e);
+    }
 }
 
 async function main() {
@@ -48,6 +61,12 @@ async function main() {
     if(!outboxPath)
         throw new Error(
             "NODE_EXPORTER_OUTBOX_PATH environment must be set");
+
+    const solanaBinaryPath = process.env.SOLANA_BINARY_PATH;
+    if(!solanaBinaryPath)
+        throw new Error(
+            "SOLANA_BINARY_PATH environment must be set");
+
     const metricFreq = parseFloat(process.env.METRIC_FREQUENCY || '60');
     const localUri = process.env.LOCAL_RPC_URI || "http://127.0.0.1:8899";
     const referenceRpcUris =
@@ -62,6 +81,7 @@ async function main() {
     const doCheck = () =>
         checkMetrics(
             outboxPath,
+            solanaBinaryPath,
             localConn,
             referenceConns,
             validatorIdentity);

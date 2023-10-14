@@ -1,7 +1,6 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { setGauge } from "./prometheus";
 
-
 async function getValidatorBalance(
     conn: Connection,
     validatorIdentity : PublicKey): Promise<number> {
