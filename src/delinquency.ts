@@ -1,8 +1,23 @@
 import {Connection} from '@solana/web3.js';
-import { setGauge } from './prometheus';
+import { Gauge } from 'prom-client';
 
-async function getDelinquency(local: Connection,
-                           refConns: Connection[]) : Promise<number | null> {
+export type DelinquencyMetrics = {
+    delinquency: Gauge
+}
+
+export function newDelinquencyMetrics(): DelinquencyMetrics {
+    return {
+        delinquency: new Gauge({
+            name: 'solana_node_delinquency',
+            help: 'Delinquency of the node'
+        })
+    }
+}
+
+async function getDelinquency(
+    local: Connection,
+    refConns: Connection[]) : Promise<number | null>
+{
     const localSlotP = local.getSlot('processed');
     let refSlotsP;
     refSlotsP = refConns.map(async c => {
@@ -34,12 +49,15 @@ async function getDelinquency(local: Connection,
     return highestRefSlot - localSlot;
 }
 
-export async function checkDelinquency(local: Connection,
-                                       refConns: Connection[],
-                                       nodeOutboxPath: string) {
+export async function checkDelinquency(
+    metrics: DelinquencyMetrics,
+    local: Connection,
+    refConns: Connection[],
+) {
     let delinquency = await getDelinquency(local, refConns);
     if(delinquency !== null) {
         console.info("Delinquency is "+delinquency);
-        await setGauge(nodeOutboxPath, "delinquency", new Map(), delinquency);
+        metrics.delinquency.set(delinquency);
+        // await setGauge(nodeOutboxPath, "delinquency", new Map(), delinquency);
     }
 }

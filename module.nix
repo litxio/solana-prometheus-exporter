@@ -5,8 +5,9 @@ let
 in {
   options.services.solana-prometheus-exporter = {
     enable = mkEnableOption "Enable Solana Prometheus exporter";
-    outboxPath = mkOption {
-      type = types.str;
+    listenPort = mkOption {
+      type = types.int;
+      default = 9621;
     };
     metricFreq = mkOption {
       type = types.int;
@@ -24,6 +25,10 @@ in {
       type = types.str;
       default = "";
     };
+    onlyOwnDetails = mkOption {
+      type = types.bool;
+      default = true;
+    };
     solanaBinaryPath = mkOption {
       type = types.str;
       default = "${pkgs.solana-cli}/bin/solana";
@@ -36,12 +41,13 @@ in {
       serviceConfig.Environment =
         let refUris = builtins.concatStringsSep "," cfg.referenceRpcUris;
             env = builtins.concatStringsSep " " [
-              "NODE_EXPORTER_OUTBOX_PATH=${cfg.outboxPath}"
+              "LISTEN_PORT=${toString cfg.listenPort}"
               "METRIC_FREQUENCY=${toString cfg.metricFreq}"
               "LOCAL_RPC_API=${cfg.localUri}"
               "REFERENCE_RPC_URIS=${refUris}"
               "VALIDATOR_IDENTITY=${cfg.validatorIdentity}"
               "SOLANA_BINARY_PATH=${cfg.solanaBinaryPath}"
+              (if cfg.onlyOwnDetails then "ONLY_OWN_DETAILS=1" else "")
             ];
         in env;
       serviceConfig.ExecStart =

@@ -25,7 +25,6 @@ export async function setGauge(outboxPath: string,
 }
 
 
-
 export function setGauges(outboxPath: string,
                           metric: string,
                           labelValues: {labels: Map<string, string>, value: number}[]
@@ -49,3 +48,28 @@ export function setGauges(outboxPath: string,
         fs.writeSync(f, `${metric}${labelStr} ${lv.value}\n`);
     }
 }
+
+
+export async function setCounter(outboxPath: string,
+                                 metric: string,
+                                 labels: Map<string, string>,
+                                 value: number) {
+    let labelStr;
+    if(labels.size == 0)
+        labelStr = "";
+    else {
+        labelStr = "{";
+        let i=0;
+        for(let [k,v] of labels) {
+            labelStr += `${k}="${v}"`;
+            if(i+1 < labels.size)
+                labelStr+=",";
+        }
+        labelStr += "}";
+    }
+    fs.writeFile(path.join(outboxPath, `${metric}.prom`),
+                  `# TYPE ${metric} counter\n${metric}${labelStr} ${value}\n`,
+                  (e) => {if(e) console.error(e);});
+}
+
+
