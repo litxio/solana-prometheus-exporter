@@ -8,7 +8,7 @@ export type DelinquencyMetrics = {
 export function newDelinquencyMetrics(): DelinquencyMetrics {
     return {
         delinquency: new Gauge({
-            name: 'solana_node_delinquency',
+            name: 'delinquency',
             help: 'Delinquency of the node'
         })
     }
