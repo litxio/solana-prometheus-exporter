@@ -125,7 +125,8 @@ export async function checkSolanaValidatorsMetrics(
             solanaBinaryPath,
             ["validators",
              "--output", "json-compact",
-             "--url", rpcUrl]
+             "--url", rpcUrl],
+            { maxBuffer: 4194304 }
         );
 
         // Decode stdout buffer as JSON:
