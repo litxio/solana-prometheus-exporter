@@ -43,7 +43,7 @@ in {
             env = builtins.concatStringsSep " " [
               "LISTEN_PORT=${toString cfg.listenPort}"
               "METRIC_FREQUENCY=${toString cfg.metricFreq}"
-              "LOCAL_RPC_API=${cfg.localUri}"
+              "LOCAL_RPC_URI=${cfg.localUri}"
               "REFERENCE_RPC_URIS=${refUris}"
               "VALIDATOR_IDENTITY=${cfg.validatorIdentity}"
               "SOLANA_BINARY_PATH=${cfg.solanaBinaryPath}"
