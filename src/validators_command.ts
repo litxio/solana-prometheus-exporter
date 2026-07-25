@@ -98,7 +98,7 @@ type ValidatorsCommandResult = {
     totalDelinquentStake: number,
     validators: [{
         activatedStake: number,
-        commission: number,
+        commissionBps: number,
         credits: number,
         delinquent: boolean,
         epochCredits: number,
@@ -250,8 +250,10 @@ export async function checkSolanaValidatorsMetrics(
         // );
         metrics.validatorActivatedStake.set({identity: validator.identityPubkey},
                                             validator.activatedStake);
+        // solana-cli 4.x reports commission in basis points; convert to percent
+        // to keep this metric's historical units.
         metrics.validatorCommission.set({identity: validator.identityPubkey},
-                                        validator.commission);
+                                        validator.commissionBps / 100);
         metrics.validatorCredits.set({identity: validator.identityPubkey},
                                      validator.credits);
         metrics.validatorEpochCredits.set({identity: validator.identityPubkey},
