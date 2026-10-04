@@ -20,7 +20,7 @@ async function getValidatorBalance(
     validatorIdentity : PublicKey
 ): Promise<number>
 {
-    let v = await conn.getBalance(validatorIdentity, 'recent');
+    let v = await conn.getBalance(validatorIdentity, 'confirmed');
     return v / 1e9;
 }
 
